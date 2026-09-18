@@ -1,0 +1,28 @@
+name: gopls
+
+on:
+  pull_request:
+    paths:
+      - "gopls/**"
+      - ".github/workflows/gopls.yml"
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: branch or SHA
+        default: gopls-dirfilters
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref || github.sha }}
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: gopls/go.mod
+          cache-dependency-path: gopls/go.sum
+      - name: go test
+        working-directory: gopls
+        run: go test ./...
